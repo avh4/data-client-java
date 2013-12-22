@@ -1,3 +1,9 @@
-To use the archetype, 
+[![Build Status](https://secure.travis-ci.org/avh4/challenge.png?branch=master)](http://travis-ci.org/avh4/challenge)
 
-    bash <(curl http://archetypes.github.io/bootstrap.sh) archetypes/java
+## challenge
+
+
+
+## Build commands
+
+* [Mutation coverage](http://pitest.org/): `mvn clean test org.pitest:pitest-maven:mutationCoverage`
