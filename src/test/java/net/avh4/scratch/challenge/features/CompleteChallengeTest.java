@@ -1,18 +1,38 @@
 package net.avh4.scratch.challenge.features;
 
+import net.avh4.data.log.ServerTransactionLog;
+import net.avh4.data.log.SimpleServer;
 import net.avh4.scratch.challenge.Commands;
-import net.avh4.data.log.TransactionLog;
-import net.avh4.data.log.TransientTransactionLog;
 import net.avh4.scratch.challenge.ViewModel;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.simpleframework.transport.connect.Connection;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 public class CompleteChallengeTest {
+    private static final int PORT = 9632;
 
-    TransientTransactionLog txnLog = new TransientTransactionLog();
-    ViewModel ui = new ViewModel(txnLog);
-    Commands commands = new Commands(txnLog);
+    private Connection connection;
+    private ServerTransactionLog txnLog;
+    private ViewModel ui;
+    private Commands commands;
+
+    @Before
+    public void setUp() throws Exception {
+        SimpleServer server = new SimpleServer();
+        connection = server.connect(PORT);
+
+        txnLog = new ServerTransactionLog("http://localhost:" + PORT);
+        ui = new ViewModel(txnLog);
+        commands = new Commands(txnLog);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        connection.close();
+    }
 
     @Test
     public void successfulCompletion() {

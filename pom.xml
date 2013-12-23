@@ -24,6 +24,7 @@
         <junit.version>4.11</junit.version>
         <mockito.version>1.9.5</mockito.version>
         <uilayer.version>3.2.0</uilayer.version>
+        <jackson.version>2.3.0</jackson.version>
     </properties>
 
     <build>
@@ -59,13 +60,14 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.avh4.framework</groupId>
-            <artifactId>uilayer-core</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.1</version>
         </dependency>
         <dependency>
-            <groupId>net.avh4.framework</groupId>
-            <artifactId>uilayer-swing</artifactId>
-            <scope>runtime</scope>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>
@@ -89,29 +91,15 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>info.cukes</groupId>
-            <artifactId>cucumber-picocontainer</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.easytesting</groupId>
             <artifactId>fest-assert</artifactId>
             <version>1.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.avh4.util</groupId>
-            <artifactId>imagecomparison</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.avh4.util</groupId>
-            <artifactId>imagecomparison-swing</artifactId>
+            <groupId>org.simpleframework</groupId>
+            <artifactId>simple</artifactId>
+            <version>5.1.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
