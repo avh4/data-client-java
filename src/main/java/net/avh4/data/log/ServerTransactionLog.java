@@ -85,7 +85,7 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
             generator.close();
             post.setEntity(new StringEntity(new String(os.toByteArray(), ENCODING_CHARSET), ContentType.APPLICATION_JSON));
             CloseableHttpResponse response = client.execute(post);
-            System.out.println(EntityUtils.toString(response.getEntity()));
+            response.getEntity().getContent().close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
