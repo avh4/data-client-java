@@ -1,9 +1,10 @@
 package net.avh4.scratch.challenge;
 
-import java.util.ArrayList;
+import net.avh4.data.log.Transaction;
+import net.avh4.data.log.TransactionLog;
+
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 public class DaysRepository implements TransactionLogFollower {
     private final TransactionLogFollowerEngine engine;

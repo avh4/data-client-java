@@ -1,5 +1,8 @@
 package net.avh4.scratch.challenge;
 
+import net.avh4.data.log.Transaction;
+import net.avh4.data.log.TransactionLog;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

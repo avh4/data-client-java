@@ -1,5 +1,7 @@
 package net.avh4.scratch.challenge;
 
+import net.avh4.data.log.TransactionLog;
+
 import java.util.List;
 
 public class ViewModel {

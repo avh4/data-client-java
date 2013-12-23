@@ -1,4 +1,4 @@
-package net.avh4.scratch.challenge;
+package net.avh4.data.log;
 
 public class Transaction {
     public final int index;

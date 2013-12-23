@@ -1,16 +1,16 @@
-package net.avh4.scratch.challenge;
+package net.avh4.data.log;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class TransactionLogTest {
-    private TransactionLog subject;
+public class TransientTransactionLogTest {
+    private TransientTransactionLog subject;
 
     @Before
     public void setUp() {
-        subject = new TransactionLog();
+        subject = new TransientTransactionLog();
     }
 
     @Test

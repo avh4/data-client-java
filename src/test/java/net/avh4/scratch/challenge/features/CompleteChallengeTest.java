@@ -1,7 +1,8 @@
 package net.avh4.scratch.challenge.features;
 
 import net.avh4.scratch.challenge.Commands;
-import net.avh4.scratch.challenge.TransactionLog;
+import net.avh4.data.log.TransactionLog;
+import net.avh4.data.log.TransientTransactionLog;
 import net.avh4.scratch.challenge.ViewModel;
 import org.junit.Test;
 
@@ -9,7 +10,7 @@ import static org.fest.assertions.Assertions.assertThat;
 
 public class CompleteChallengeTest {
 
-    TransactionLog txnLog = new TransactionLog();
+    TransientTransactionLog txnLog = new TransientTransactionLog();
     ViewModel ui = new ViewModel(txnLog);
     Commands commands = new Commands(txnLog);
 

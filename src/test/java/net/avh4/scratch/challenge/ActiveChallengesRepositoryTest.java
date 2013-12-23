@@ -1,5 +1,7 @@
 package net.avh4.scratch.challenge;
 
+import net.avh4.data.log.Transaction;
+import net.avh4.data.log.TransactionLog;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

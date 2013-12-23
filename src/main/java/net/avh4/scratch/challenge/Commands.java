@@ -1,11 +1,14 @@
 package net.avh4.scratch.challenge;
 
+import net.avh4.data.log.TransactionLog;
+import net.avh4.data.log.TransactionLogCommands;
+
 import java.util.Date;
 
 public class Commands {
-    private final TransactionLog txnLog;
+    private final TransactionLogCommands txnLog;
 
-    public Commands(TransactionLog txnLog) {
+    public Commands(TransactionLogCommands txnLog) {
         this.txnLog = txnLog;
     }
 
