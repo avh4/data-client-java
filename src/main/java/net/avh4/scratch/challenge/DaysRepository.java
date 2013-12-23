@@ -1,27 +1,19 @@
 package net.avh4.scratch.challenge;
 
 import net.avh4.data.log.Transaction;
-import net.avh4.data.log.TransactionLog;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class DaysRepository implements TransactionLogFollower {
-    private final TransactionLogFollowerEngine engine;
     private final HashMap<String, String> titles = new HashMap<>();
     private final HashSet<String> completed = new HashSet<>();
 
-    public DaysRepository(TransactionLog txnLog) {
-        this.engine = new TransactionLogFollowerEngine(txnLog, this);
-    }
-
     public String title(String dayId) {
-        engine.pullTransactionLog();
         return titles.get(dayId);
     }
 
     public boolean completed(String dayId) {
-        engine.pullTransactionLog();
         return completed.contains(dayId);
     }
 

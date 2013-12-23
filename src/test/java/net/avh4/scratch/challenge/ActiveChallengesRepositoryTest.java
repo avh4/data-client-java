@@ -11,13 +11,11 @@ import static org.fest.assertions.Assertions.assertThat;
 
 public class ActiveChallengesRepositoryTest {
     private ActiveChallengesRepository subject;
-    @Mock
-    private TransactionLog txnLog;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        subject = new ActiveChallengesRepository(txnLog);
+        subject = new ActiveChallengesRepository();
     }
 
     @Test

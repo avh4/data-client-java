@@ -8,27 +8,19 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ActiveChallengesRepository implements TransactionLogFollower {
-    private final TransactionLogFollowerEngine engine;
     private final ArrayList<String> ids = new ArrayList<>();
     private final HashMap<String, String> names = new HashMap<>();
     private final HashMap<String, ArrayList<String>> days = new HashMap<>();
 
-    public ActiveChallengesRepository(TransactionLog txnLog) {
-        this.engine = new TransactionLogFollowerEngine(txnLog, this);
-    }
-
     public List<String> getAll() {
-        engine.pullTransactionLog();
         return ids; // TODO: XXX: this is mutable
     }
 
     public String name(String challengeId) {
-        engine.pullTransactionLog();
         return names.get(challengeId);
     }
 
     public List<String> days(String activeChallengeId) {
-        engine.pullTransactionLog();
         return days.get(activeChallengeId); // TODO: XXX: this is mutable
     }
 

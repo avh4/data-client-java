@@ -5,30 +5,30 @@ import net.avh4.data.log.TransactionLog;
 import java.util.List;
 
 public class ViewModel {
-    private final ActiveChallengesRepository activeChallengesRepository;
-    private final DaysRepository daysRepository;
+    private final TransactionLogFollowerEngine<ActiveChallengesRepository> activeChallengesRepository;
+    private final TransactionLogFollowerEngine<DaysRepository> daysRepository;
     private final NewThing newThing;
 
     public ViewModel(TransactionLog txnLog) {
-        activeChallengesRepository = new ActiveChallengesRepository(txnLog);
-        daysRepository = new DaysRepository(txnLog);
+        activeChallengesRepository = new TransactionLogFollowerEngine<>(txnLog, new ActiveChallengesRepository());
+        daysRepository = new TransactionLogFollowerEngine<>(txnLog, new DaysRepository());
         newThing = new NewThing(activeChallengesRepository, daysRepository);
     }
 
     public List<String> activeChallenges() {
-        return activeChallengesRepository.getAll();
+        return activeChallengesRepository.result().getAll();
     }
 
     public List<String> days(String activeChallengeId) {
-        return activeChallengesRepository.days(activeChallengeId);
+        return activeChallengesRepository.result().days(activeChallengeId);
     }
 
     public boolean completed(String dayId) {
-        return daysRepository.completed(dayId);
+        return daysRepository.result().completed(dayId);
     }
 
     public String dayTitle(String dayId) {
-        return daysRepository.title(dayId);
+        return daysRepository.result().title(dayId);
     }
 
     public boolean challengeCompleted(String challengeId) {
@@ -36,6 +36,6 @@ public class ViewModel {
     }
 
     public String activeChallengeName(String challengeId) {
-        return activeChallengesRepository.name(challengeId);
+        return activeChallengesRepository.result().name(challengeId);
     }
 }
