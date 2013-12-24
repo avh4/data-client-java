@@ -8,7 +8,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,6 +25,11 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
     public ServerTransactionLog(String url) {
         this.url = url;
         client = HttpClients.createDefault();
+    }
+
+    @Override
+    public int count() {
+        throw new RuntimeException("Not implemented");
     }
 
     @Override

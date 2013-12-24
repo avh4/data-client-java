@@ -1,23 +1,21 @@
-package net.avh4.scratch.challenge;
+package net.avh4.data.log;
 
-import net.avh4.data.log.Transaction;
-import net.avh4.data.log.TransactionLog;
-
-public class TransactionLogFollowerEngine<F extends TransactionLogFollower> {
+public class LogFollowerEngine<F extends TransactionFollower> {
     protected final TransactionLog txnLog;
     private final F follower;
     private int next = 0;
 
-    public TransactionLogFollowerEngine(TransactionLog txnLog, F follower) {
+    public LogFollowerEngine(TransactionLog txnLog, F follower) {
         this.txnLog = txnLog;
         this.follower = follower;
     }
 
     protected void pullTransactionLog() {
+        // TODO: test this
         synchronized (this) {
             for (Transaction transaction : txnLog.get(next)) {
                 follower.process(transaction);
-                next = transaction.index;
+                next = transaction.index + 1;
             }
         }
     }

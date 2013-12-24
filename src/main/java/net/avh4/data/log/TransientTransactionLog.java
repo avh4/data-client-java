@@ -15,6 +15,11 @@ public class TransientTransactionLog implements TransactionLog, TransactionLogCo
     }
 
     @Override
+    public int count() {
+        return txns.size();
+    }
+
+    @Override
     public List<Transaction> getAll() {
         return txns; // TODO: XXX this is mutable
     }

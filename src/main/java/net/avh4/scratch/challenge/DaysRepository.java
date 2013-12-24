@@ -1,13 +1,24 @@
 package net.avh4.scratch.challenge;
 
 import net.avh4.data.log.Transaction;
+import net.avh4.data.log.TransactionFollower;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class DaysRepository implements TransactionLogFollower {
-    private final HashMap<String, String> titles = new HashMap<>();
-    private final HashSet<String> completed = new HashSet<>();
+public class DaysRepository implements TransactionFollower<DaysRepository> {
+    // TODO: rewrite using persistent data structures
+    private final HashMap<String, String> titles;
+    private final HashSet<String> completed;
+
+    public DaysRepository() {
+        this(new HashMap<String, String>(), new HashSet<String>());
+    }
+
+    private DaysRepository(HashMap<String, String> titles, HashSet<String> completed) {
+        this.titles = titles;
+        this.completed = completed;
+    }
 
     public String title(String dayId) {
         return titles.get(dayId);
@@ -39,5 +50,10 @@ public class DaysRepository implements TransactionLogFollower {
                 completed.remove(key);
             }
         }
+    }
+
+    @Override
+    public DaysRepository fork() {
+        return new DaysRepository(new HashMap<>(titles), new HashSet<>(completed));
     }
 }

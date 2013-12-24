@@ -1,16 +1,28 @@
 package net.avh4.scratch.challenge;
 
 import net.avh4.data.log.Transaction;
-import net.avh4.data.log.TransactionLog;
+import net.avh4.data.log.TransactionFollower;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ActiveChallengesRepository implements TransactionLogFollower {
-    private final ArrayList<String> ids = new ArrayList<>();
-    private final HashMap<String, String> names = new HashMap<>();
-    private final HashMap<String, ArrayList<String>> days = new HashMap<>();
+public class ActiveChallengesRepository implements TransactionFollower<ActiveChallengesRepository> {
+    // TODO: rewrite using persistent data structures
+    private final ArrayList<String> ids;
+    private final HashMap<String, String> names;
+    private final HashMap<String, ArrayList<String>> days;
+
+    public ActiveChallengesRepository() {
+        this(new ArrayList<String>(), new HashMap<String, String>(), new HashMap<String, ArrayList<String>>());
+    }
+
+    private ActiveChallengesRepository(ArrayList<String> ids, HashMap<String, String> names,
+                                       HashMap<String, ArrayList<String>> days) {
+        this.ids = ids;
+        this.names = names;
+        this.days = days;
+    }
 
     public List<String> getAll() {
         return ids; // TODO: XXX: this is mutable
@@ -43,5 +55,10 @@ public class ActiveChallengesRepository implements TransactionLogFollower {
             String dayKey = key + '/' + keys[2] + '/' + keys[3];
             days.get(key).add(dayKey);
         }
+    }
+
+    @Override
+    public ActiveChallengesRepository fork() {
+        return new ActiveChallengesRepository(new ArrayList<>(ids), new HashMap<>(names), new HashMap<>(days));
     }
 }
