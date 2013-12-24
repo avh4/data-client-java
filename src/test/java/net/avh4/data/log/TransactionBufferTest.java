@@ -45,7 +45,7 @@ public class TransactionBufferTest {
     }
 
     @Test
-    public void sync_addsPendingTransactionsToMaster() {
+    public void flush_addsPendingTransactionsToMaster() {
         subject.add("k10", "v10");
         subject.flush();
         assertThat(master.getAll()).containsExactly(
@@ -56,7 +56,7 @@ public class TransactionBufferTest {
     }
 
     @Test
-    public void sync_createsNewCommittedTransactions() {
+    public void flush_createsNewCommittedTransactions() {
         subject.add("k10", "v10");
         subject.flush();
         assertThat(subject.getCommitted(2)).containsExactly(
@@ -65,7 +65,7 @@ public class TransactionBufferTest {
     }
 
     @Test
-    public void sync_clearsPendingTransactions() {
+    public void flush_clearsPendingTransactions() {
         subject.add("k10", "v10");
         subject.flush();
         assertThat(subject.getPending(3, 0)).isEmpty();
