@@ -49,16 +49,22 @@ public class SimpleServer implements Container {
             boolean get = request.getMethod().equals("GET");
             boolean post = request.getMethod().equals("POST");
             if (segments.length < 2 || !segments[0].equals("apps")) {
-                notFound(request, response);
+                terminate(Status.NOT_FOUND, request, response);
+                return;
             }
             String appId = segments[1];
-            String userId = "USER";
+            String userId = request.getValue("X-User-ID");
+            if (userId == null) {
+                terminate(Status.UNAUTHORIZED, request, response);
+                return;
+            }
             if (get && segments.length == 2) {
                 handleAll(appId, userId, request, response);
             } else if (post && segments.length == 2) {
                 handleAdd(appId, userId, request, response);
             } else {
-                notFound(request, response);
+                terminate(Status.NOT_FOUND, request, response);
+                return;
             }
             response.close();
         } catch (Exception e) {
@@ -75,8 +81,8 @@ public class SimpleServer implements Container {
         }
     }
 
-    private void notFound(Request request, Response response) throws IOException {
-        response.setStatus(Status.NOT_FOUND);
+    private void terminate(Status status, Request request, Response response) throws IOException {
+        response.setStatus(status);
         response.setContentType("text/plain");
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         writer.write(request.toString());

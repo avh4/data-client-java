@@ -21,9 +21,11 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
     private final String url;
     private final CloseableHttpClient client;
     private final JsonFactory factory = new JsonFactory();
+    private final String userId;
 
-    public ServerTransactionLog(String url) {
+    public ServerTransactionLog(String url, String userId) {
         this.url = url;
+        this.userId = userId;
         client = HttpClients.createDefault();
     }
 
@@ -36,6 +38,7 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
     public List<Transaction> get(int last) {
         String uri = url + "?last=" + last;
         HttpGet get = new HttpGet(uri);
+        get.addHeader("X-User-ID", userId);
         try {
             CloseableHttpResponse response = client.execute(get);
             if (response.getStatusLine().getStatusCode() != 200) {
@@ -76,6 +79,7 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
     @Override
     public void add(String key, String value) {
         HttpPost post = new HttpPost(url);
+        post.addHeader("X-User-ID", userId);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             JsonGenerator generator = factory.createGenerator(os, ENCODING_JSON);

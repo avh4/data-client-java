@@ -11,11 +11,12 @@ public class ServerTransactionLogTest {
     public static final int PORT = 9876;
     private ServerTransactionLog subject;
     private Connection connection;
+    private String userId = "UNIT-TESTS-USER";
 
     @Before
     public void setUp() throws Exception {
         connection = new SimpleServer().connect(PORT);
-        subject = new ServerTransactionLog("http://localhost:" + PORT + "/apps/UNIT-TESTS");
+        subject = new ServerTransactionLog("http://localhost:" + PORT + "/apps/UNIT-TESTS", userId);
     }
 
     @After
