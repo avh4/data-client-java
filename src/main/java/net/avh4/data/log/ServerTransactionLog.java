@@ -23,8 +23,8 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
     private final JsonFactory factory = new JsonFactory();
     private final String userId;
 
-    public ServerTransactionLog(String url, String userId) {
-        this.url = url;
+    public ServerTransactionLog(String url, String appId, String userId) {
+        this.url = url + "/apps/" + appId;
         this.userId = userId;
         client = HttpClients.createDefault();
     }
