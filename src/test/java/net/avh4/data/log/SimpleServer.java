@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.HashMap;
 import java.util.List;
 
 public class SimpleServer implements Container {
@@ -30,7 +31,8 @@ public class SimpleServer implements Container {
         new SimpleServer().connect(port);
     }
 
-    private final TransientTransactionLog storage = new TransientTransactionLog();
+    private final HashMap<String, HashMap<String, TransientTransactionLog>> storage
+            = new HashMap<>();
 
     public Connection connect(int port) throws IOException {
         Server server = new ContainerServer(this);
@@ -50,10 +52,11 @@ public class SimpleServer implements Container {
                 notFound(request, response);
             }
             String appId = segments[1];
+            String userId = "USER";
             if (get && segments.length == 2) {
-                handleAll(request, response);
+                handleAll(appId, userId, request, response);
             } else if (post && segments.length == 2) {
-                handleAdd(request, response);
+                handleAdd(appId, userId, request, response);
             } else {
                 notFound(request, response);
             }
@@ -81,14 +84,25 @@ public class SimpleServer implements Container {
         response.close();
     }
 
-    private void handleAll(Request request, Response response) throws IOException {
+    private TransientTransactionLog getLog(String appId, String userId) {
+        if (!storage.containsKey(appId)) {
+            storage.put(appId, new HashMap<String, TransientTransactionLog>());
+        }
+        HashMap<String, TransientTransactionLog> appStorage = storage.get(appId);
+        if (!appStorage.containsKey(userId)) {
+            appStorage.put(userId, new TransientTransactionLog());
+        }
+        return appStorage.get(userId);
+    }
+
+    private void handleAll(String appId, String userId, Request request, Response response) throws IOException {
         String lastString = request.getParameter("last");
         int last = Integer.parseInt(lastString);
         JsonFactory factory = new JsonFactory();
         JsonGenerator generator = factory.createGenerator(response.getOutputStream());
         generator.writeStartArray();
 
-        List<Transaction> transactions = storage.get(last);
+        List<Transaction> transactions = getLog(appId, userId).get(last);
         for (Transaction txn : transactions) {
             generator.writeStartArray();
             generator.writeNumber(txn.index);
@@ -101,7 +115,7 @@ public class SimpleServer implements Container {
         generator.close();
     }
 
-    private void handleAdd(Request request, Response response) throws IOException {
+    private void handleAdd(String appId, String userId, Request request, Response response) throws IOException {
         JsonFactory factory = new JsonFactory();
         JsonParser parser = factory.createParser(request.getInputStream());
         if (parser.nextToken() != JsonToken.START_ARRAY)
@@ -115,7 +129,7 @@ public class SimpleServer implements Container {
                 String value = parser.getValueAsString();
                 if (parser.nextToken() != JsonToken.END_ARRAY)
                     throw new RuntimeException("Expected an array of key/value pairs");
-                storage.add(key, value);
+                getLog(appId, userId).add(key, value);
             } else if (token == JsonToken.END_ARRAY) {
                 if (parser.nextToken() != null)
                     throw new RuntimeException("Thought we finished parsing, but there are more tokens");
