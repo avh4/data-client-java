@@ -6,6 +6,7 @@ public class TransactionBuffer implements TransactionLogCommands {
     private final TransactionLog master;
     private final TransactionLogCommands masterCommands;
     private TransientTransactionLog pending = new TransientTransactionLog();
+    private int lastCommittedRequest;
 
     public TransactionBuffer(TransactionLog master, TransactionLogCommands masterCommands) {
         this.master = master;
@@ -20,14 +21,17 @@ public class TransactionBuffer implements TransactionLogCommands {
     }
 
     public List<Transaction> getCommitted(int last) {
-        return master.get(last);
+        List<Transaction> transactions = master.get(last);
+        if (!transactions.isEmpty()) {
+            lastCommittedRequest = transactions.get(transactions.size() - 1).index;
+        }
+        return transactions;
     }
 
     public List<Transaction> getPending(int lastCommitted, int last) {
-        int count = master.count();
-        if (lastCommitted != count) {
-            throw new IllegalArgumentException("Flush committed transactions before requesting pending transactions: " +
-                    "committedIndex (" + lastCommitted + ") != " + count);
+        if (lastCommitted != lastCommittedRequest) {
+            throw new IllegalArgumentException("Must acknowledge all committed transactions when requesting pending " +
+                    "transactions: " + lastCommitted + " (passed) != " + lastCommittedRequest + " (expected)");
         }
         return pending.get(last);
     }

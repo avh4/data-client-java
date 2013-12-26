@@ -30,11 +30,6 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
     }
 
     @Override
-    public int count() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
     public List<Transaction> get(int last) {
         String uri = url + "?last=" + last;
         HttpGet get = new HttpGet(uri);

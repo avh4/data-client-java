@@ -1,18 +1,23 @@
 package net.avh4.scratch.challenge;
 
-import net.avh4.data.log.LogFollowerEngine;
-import net.avh4.data.log.TransactionLog;
+import net.avh4.data.log.*;
 
 import java.util.List;
 
 public class ViewModel {
-    private final LogFollowerEngine<ActiveChallengesRepository> activeChallengesRepository;
-    private final LogFollowerEngine<DaysRepository> daysRepository;
+    private final FollowerEngine<ActiveChallengesRepository> activeChallengesRepository;
+    private final FollowerEngine<DaysRepository> daysRepository;
     private final NewThing newThing;
 
     public ViewModel(TransactionLog txnLog) {
         activeChallengesRepository = new LogFollowerEngine<>(txnLog, new ActiveChallengesRepository());
         daysRepository = new LogFollowerEngine<>(txnLog, new DaysRepository());
+        newThing = new NewThing(activeChallengesRepository, daysRepository);
+    }
+
+    public ViewModel(TransactionBuffer buffer) {
+        activeChallengesRepository = new BufferFollowerEngine<>(buffer, new ActiveChallengesRepository());
+        daysRepository = new BufferFollowerEngine<>(buffer, new DaysRepository());
         newThing = new NewThing(activeChallengesRepository, daysRepository);
     }
 

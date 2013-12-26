@@ -1,6 +1,6 @@
 package net.avh4.data.log;
 
-public class BufferFollowerEngine<F extends TransactionFollower<F>> {
+public class BufferFollowerEngine<F extends TransactionFollower<F>> implements FollowerEngine<F> {
     private final TransactionBuffer buffer;
     private final F masterFollower;
     private int lastCommitted = 0;
@@ -30,6 +30,7 @@ public class BufferFollowerEngine<F extends TransactionFollower<F>> {
         }
     }
 
+    @Override
     public F result() {
         pullTransactionLog();
         if (forkFollower != null) return forkFollower;

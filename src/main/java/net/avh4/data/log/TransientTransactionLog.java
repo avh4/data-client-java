@@ -15,12 +15,6 @@ public class TransientTransactionLog implements TransactionLog, TransactionLogCo
     }
 
     @Override
-    public int count() {
-        assert count == txns.size();
-        return count;
-    }
-
-    @Override
     public List<Transaction> get(int startingIndex) {
         return new ArrayList<>(txns.subList(startingIndex, txns.size()));
     }

@@ -1,15 +1,16 @@
 package net.avh4.scratch.challenge;
 
+import net.avh4.data.log.FollowerEngine;
 import net.avh4.data.log.LogFollowerEngine;
 
 import java.util.List;
 
 public class NewThing {
-    private final LogFollowerEngine<ActiveChallengesRepository> activeChallengesRepository;
-    private final LogFollowerEngine<DaysRepository> daysRepository;
+    private final FollowerEngine<ActiveChallengesRepository> activeChallengesRepository;
+    private final FollowerEngine<DaysRepository> daysRepository;
 
-    public NewThing(LogFollowerEngine<ActiveChallengesRepository> activeChallengesRepository,
-                    LogFollowerEngine<DaysRepository> daysRepository) {
+    public NewThing(FollowerEngine<ActiveChallengesRepository> activeChallengesRepository,
+                    FollowerEngine<DaysRepository> daysRepository) {
         this.activeChallengesRepository = activeChallengesRepository;
         this.daysRepository = daysRepository;
     }

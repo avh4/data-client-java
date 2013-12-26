@@ -1,6 +1,6 @@
 package net.avh4.data.log;
 
-public class LogFollowerEngine<F extends TransactionFollower> {
+public class LogFollowerEngine<F extends TransactionFollower<F>> implements FollowerEngine<F> {
     protected final TransactionLog txnLog;
     private final F follower;
     private int last = 0;

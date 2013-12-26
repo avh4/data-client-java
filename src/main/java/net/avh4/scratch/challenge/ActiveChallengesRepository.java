@@ -53,7 +53,9 @@ public class ActiveChallengesRepository implements TransactionFollower<ActiveCha
 
         if (keys.length >= 4 && keys[2].equals("days")) {
             String dayKey = key + '/' + keys[2] + '/' + keys[3];
-            days.get(key).add(dayKey);
+            if (!days.get(key).contains(dayKey)) {
+                days.get(key).add(dayKey);
+            }
         }
     }
 
