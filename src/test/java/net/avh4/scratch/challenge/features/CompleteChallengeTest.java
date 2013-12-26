@@ -24,7 +24,7 @@ public class CompleteChallengeTest {
         SimpleServer server = new SimpleServer();
         connection = server.connect(PORT);
 
-        txnLog = new ServerTransactionLog("http://localhost:" + PORT);
+        txnLog = new ServerTransactionLog("http://localhost:" + PORT + "/apps/UNIT-TESTS");
         ui = new ViewModel(txnLog);
         commands = new Commands(txnLog);
     }

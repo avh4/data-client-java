@@ -5,7 +5,5 @@ import java.util.List;
 public interface TransactionLog {
     int count();
 
-    List<Transaction> getAll();
-
-    List<Transaction> get(int startingIndex);
+    List<Transaction> get(int last);
 }

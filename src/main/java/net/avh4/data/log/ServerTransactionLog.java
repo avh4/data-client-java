@@ -33,15 +33,14 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
     }
 
     @Override
-    public List<Transaction> getAll() {
-        return get(0);
-    }
-
-    @Override
-    public List<Transaction> get(int startingIndex) {
-        HttpGet get = new HttpGet(url + "/all?start=" + startingIndex);
+    public List<Transaction> get(int last) {
+        String uri = url + "?last=" + last;
+        HttpGet get = new HttpGet(uri);
         try {
             CloseableHttpResponse response = client.execute(get);
+            if (response.getStatusLine().getStatusCode() != 200) {
+                throw new RuntimeException(uri + ": " + response.getStatusLine());
+            }
 
             ArrayList<Transaction> result = new ArrayList<>();
 
@@ -76,7 +75,7 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
 
     @Override
     public void add(String key, String value) {
-        HttpPost post = new HttpPost(url + "/all");
+        HttpPost post = new HttpPost(url);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             JsonGenerator generator = factory.createGenerator(os, ENCODING_JSON);

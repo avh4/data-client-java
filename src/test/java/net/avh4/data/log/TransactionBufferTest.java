@@ -21,8 +21,8 @@ public class TransactionBufferTest {
     @Test
     public void getCommitted_shouldGiveTransactionsFromMaster() {
         assertThat(subject.getCommitted(0)).containsExactly(
-                new Transaction(0, "k1", "v1"),
-                new Transaction(1, "k2", "v2")
+                new Transaction(1, "k1", "v1"),
+                new Transaction(2, "k2", "v2")
         );
     }
 
@@ -30,7 +30,7 @@ public class TransactionBufferTest {
     public void getPending_returnsPendingTransactions() {
         subject.add("k10", "v10");
         assertThat(subject.getPending(2, 0)).containsExactly(
-                new Transaction(0, "k10", "v10")
+                new Transaction(1, "k10", "v10")
         );
     }
 
@@ -48,10 +48,10 @@ public class TransactionBufferTest {
     public void flush_addsPendingTransactionsToMaster() {
         subject.add("k10", "v10");
         subject.flush();
-        assertThat(master.getAll()).containsExactly(
-                new Transaction(0, "k1", "v1"),
-                new Transaction(1, "k2", "v2"),
-                new Transaction(2, "k10", "v10")
+        assertThat(master.get(0)).containsExactly(
+                new Transaction(1, "k1", "v1"),
+                new Transaction(2, "k2", "v2"),
+                new Transaction(3, "k10", "v10")
         );
     }
 
@@ -60,7 +60,7 @@ public class TransactionBufferTest {
         subject.add("k10", "v10");
         subject.flush();
         assertThat(subject.getCommitted(2)).containsExactly(
-                new Transaction(2, "k10", "v10")
+                new Transaction(3, "k10", "v10")
         );
     }
 

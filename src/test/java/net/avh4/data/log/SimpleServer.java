@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
+import org.simpleframework.http.Status;
 import org.simpleframework.http.core.Container;
 import org.simpleframework.http.core.ContainerServer;
 import org.simpleframework.transport.Server;
@@ -45,16 +46,16 @@ public class SimpleServer implements Container {
             String[] segments = request.getPath().getSegments();
             boolean get = request.getMethod().equals("GET");
             boolean post = request.getMethod().equals("POST");
-            if (get && segments.length > 0 && segments[0].equals("all")) {
+            if (segments.length < 2 || !segments[0].equals("apps")) {
+                notFound(request, response);
+            }
+            String appId = segments[1];
+            if (get && segments.length == 2) {
                 handleAll(request, response);
-            } else if (post && segments.length > 0 && segments[0].equals("all")) {
+            } else if (post && segments.length == 2) {
                 handleAdd(request, response);
             } else {
-                response.setCode(400);
-                response.setContentType("text/plain");
-                PrintWriter writer = new PrintWriter(response.getOutputStream());
-                writer.write(request.toString());
-                writer.close();
+                notFound(request, response);
             }
             response.close();
         } catch (Exception e) {
@@ -71,17 +72,23 @@ public class SimpleServer implements Container {
         }
     }
 
+    private void notFound(Request request, Response response) throws IOException {
+        response.setStatus(Status.NOT_FOUND);
+        response.setContentType("text/plain");
+        PrintWriter writer = new PrintWriter(response.getOutputStream());
+        writer.write(request.toString());
+        writer.close();
+        response.close();
+    }
+
     private void handleAll(Request request, Response response) throws IOException {
-        String startString = request.getParameter("start");
-        int start = 0;
-        if (startString != null) {
-            start = Integer.parseInt(startString);
-        }
+        String lastString = request.getParameter("last");
+        int last = Integer.parseInt(lastString);
         JsonFactory factory = new JsonFactory();
         JsonGenerator generator = factory.createGenerator(response.getOutputStream());
         generator.writeStartArray();
 
-        List<Transaction> transactions = storage.get(start);
+        List<Transaction> transactions = storage.get(last);
         for (Transaction txn : transactions) {
             generator.writeStartArray();
             generator.writeNumber(txn.index);

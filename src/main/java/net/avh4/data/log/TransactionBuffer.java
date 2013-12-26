@@ -13,23 +13,23 @@ public class TransactionBuffer implements TransactionLogCommands {
     }
 
     public void flush() {
-        for (Transaction transaction : pending.getAll()) {
+        for (Transaction transaction : pending.get(0)) {
             masterCommands.add(transaction.key, transaction.value);
         }
         pending = new TransientTransactionLog();
     }
 
-    public List<Transaction> getCommitted(int startingIndex) {
-        return master.get(startingIndex);
+    public List<Transaction> getCommitted(int last) {
+        return master.get(last);
     }
 
-    public List<Transaction> getPending(int committedIndex, int startingIndex) {
+    public List<Transaction> getPending(int lastCommitted, int last) {
         int count = master.count();
-        if (committedIndex != count) {
+        if (lastCommitted != count) {
             throw new IllegalArgumentException("Flush committed transactions before requesting pending transactions: " +
-                    "committedIndex (" + committedIndex + ") != " + count);
+                    "committedIndex (" + lastCommitted + ") != " + count);
         }
-        return pending.get(startingIndex);
+        return pending.get(last);
     }
 
     @Override

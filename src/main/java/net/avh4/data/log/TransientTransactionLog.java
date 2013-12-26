@@ -5,23 +5,19 @@ import java.util.List;
 
 public class TransientTransactionLog implements TransactionLog, TransactionLogCommands {
     private final ArrayList<Transaction> txns = new ArrayList<>();
+    private int count = 0;
 
     @Override
     public void add(String key, String value) {
-        synchronized(this) {
-            int next = txns.size();
-            txns.add(new Transaction(next, key, value));
+        synchronized (this) {
+            txns.add(new Transaction(++count, key, value));
         }
     }
 
     @Override
     public int count() {
-        return txns.size();
-    }
-
-    @Override
-    public List<Transaction> getAll() {
-        return txns; // TODO: XXX this is mutable
+        assert count == txns.size();
+        return count;
     }
 
     @Override
