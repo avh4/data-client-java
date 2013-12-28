@@ -28,6 +28,7 @@ public class TransactionBufferTest {
 
     @Test
     public void getPending_returnsPendingTransactions() {
+        subject.getCommitted(0);
         subject.add("k10", "v10");
         assertThat(subject.getPending(2, 0)).containsExactly(
                 new Transaction(1, "k10", "v10")
@@ -36,11 +37,13 @@ public class TransactionBufferTest {
 
     @Test
     public void getPending_withNoPendingTransactions_returnsEmpty() {
+        subject.getCommitted(0);
         assertThat(subject.getPending(2, 0)).isEmpty();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getPending_withUnacknowledgedCommittedTransactions_throws() {
+        subject.getCommitted(0);
         subject.getPending(0, 0);
     }
 
@@ -66,8 +69,10 @@ public class TransactionBufferTest {
 
     @Test
     public void flush_clearsPendingTransactions() {
+        subject.getCommitted(0);
         subject.add("k10", "v10");
         subject.flush();
+        subject.getCommitted(2);
         assertThat(subject.getPending(3, 0)).isEmpty();
     }
 }
