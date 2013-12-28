@@ -1,6 +1,6 @@
-[![Build Status](https://secure.travis-ci.org/avh4/challenge.png?branch=master)](http://travis-ci.org/avh4/challenge)
+[![Build Status](https://secure.travis-ci.org/avh4/data-client-java.png?branch=master)](http://travis-ci.org/avh4/data-client-java)
 
-## challenge
+## data-client-java
 
 
 

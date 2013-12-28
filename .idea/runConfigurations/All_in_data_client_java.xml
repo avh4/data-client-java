@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="All in challenge" type="JUnit" factoryName="JUnit">
-    <module name="challenge" />
+  <configuration default="false" name="All in data-client-java" type="JUnit" factoryName="JUnit">
+    <module name="data-client-java" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
     <option name="PACKAGE_NAME" value="" />
