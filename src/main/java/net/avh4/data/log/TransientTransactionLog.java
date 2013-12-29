@@ -3,7 +3,7 @@ package net.avh4.data.log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransientTransactionLog implements TransactionLog, TransactionLogCommands {
+public class TransientTransactionLog implements TransactionLog, TransactionLogCommands, TransactionLogBulkCommands {
     private final ArrayList<Transaction> txns = new ArrayList<>();
     private int count = 0;
 
@@ -17,5 +17,12 @@ public class TransientTransactionLog implements TransactionLog, TransactionLogCo
     @Override
     public List<Transaction> get(int startingIndex) {
         return new ArrayList<>(txns.subList(startingIndex, txns.size()));
+    }
+
+    @Override
+    public void addAll(List<Transaction> txns) {
+        for (Transaction txn : txns) {
+            add(txn.key, txn.value);
+        }
     }
 }

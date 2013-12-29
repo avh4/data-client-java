@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerTransactionLog implements TransactionLog, TransactionLogCommands {
+public class ServerTransactionLog implements TransactionLog, TransactionLogCommands, TransactionLogBulkCommands {
     private final String url;
     private final JsonFactory factory = new JsonFactory();
     private final String userId;
@@ -65,6 +65,13 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
 
     @Override
     public void add(String key, String value) {
+        ArrayList<Transaction> txns = new ArrayList<>();
+        txns.add(new Transaction(-1, key, value));
+        addAll(txns);
+    }
+
+    @Override
+    public void addAll(List<Transaction> txns) {
         try {
             HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
             c.setRequestMethod("POST");
@@ -75,10 +82,12 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
 
             JsonGenerator generator = factory.createGenerator(c.getOutputStream(), JsonEncoding.UTF8);
             generator.writeStartArray();
-            generator.writeStartArray();
-            generator.writeString(key);
-            generator.writeString(value);
-            generator.writeEndArray();
+            for (Transaction txn : txns) {
+                generator.writeStartArray();
+                generator.writeString(txn.key);
+                generator.writeString(txn.value);
+                generator.writeEndArray();
+            }
             generator.writeEndArray();
             generator.close();
             c.getOutputStream().flush();

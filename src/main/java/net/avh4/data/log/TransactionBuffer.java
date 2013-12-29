@@ -4,19 +4,17 @@ import java.util.List;
 
 public class TransactionBuffer implements TransactionLogCommands {
     private final TransactionLog master;
-    private final TransactionLogCommands masterCommands;
+    private final TransactionLogBulkCommands masterCommands;
     private TransientTransactionLog pending = new TransientTransactionLog();
     private int lastCommittedRequest;
 
-    public TransactionBuffer(TransactionLog master, TransactionLogCommands masterCommands) {
+    public TransactionBuffer(TransactionLog master, TransactionLogBulkCommands masterCommands) {
         this.master = master;
         this.masterCommands = masterCommands;
     }
 
     public void flush() {
-        for (Transaction transaction : pending.get(0)) {
-            masterCommands.add(transaction.key, transaction.value);
-        }
+        masterCommands.addAll(pending.get(0));
         pending = new TransientTransactionLog();
     }
 
