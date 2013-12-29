@@ -144,5 +144,6 @@ public class SimpleServer implements Container {
                 throw new RuntimeException("Unexpected JSON value");
             }
         }
+        response.setStatus(Status.ACCEPTED);
     }
 }

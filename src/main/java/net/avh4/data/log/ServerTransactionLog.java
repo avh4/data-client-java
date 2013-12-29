@@ -1,48 +1,39 @@
 package net.avh4.data.log;
 
 import com.fasterxml.jackson.core.*;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServerTransactionLog implements TransactionLog, TransactionLogCommands {
-    private static final JsonEncoding ENCODING_JSON = JsonEncoding.UTF8;
-    private static final Charset ENCODING_CHARSET = Charset.forName("UTF-8");
     private final String url;
-    private final CloseableHttpClient client;
     private final JsonFactory factory = new JsonFactory();
     private final String userId;
 
     public ServerTransactionLog(String url, String appId, String userId) {
         this.url = url + "/apps/" + appId;
         this.userId = userId;
-        client = HttpClients.createDefault();
     }
 
     @Override
     public List<Transaction> get(int last) {
         String uri = url + "?last=" + last;
-        HttpGet get = new HttpGet(uri);
-        get.addHeader("X-User-ID", userId);
         try {
-            CloseableHttpResponse response = client.execute(get);
-            if (response.getStatusLine().getStatusCode() != 200) {
-                throw new RuntimeException(uri + ": " + response.getStatusLine());
+            HttpURLConnection c = (HttpURLConnection) new URL(uri).openConnection();
+            c.setRequestMethod("GET");
+            c.setRequestProperty("X-User-ID", userId);
+            c.connect();
+
+            if (c.getResponseCode() != 200) {
+                throw new RuntimeException(uri + ": " + c.getResponseMessage());
             }
 
             ArrayList<Transaction> result = new ArrayList<>();
 
-            JsonParser parser = factory.createParser(response.getEntity().getContent());
+            JsonParser parser = factory.createParser(c.getInputStream());
             if (parser.nextToken() != JsonToken.START_ARRAY)
                 throw new RuntimeException("Expected an array of key/value pairs");
             while (true) {
@@ -65,6 +56,7 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
                     throw new RuntimeException("Unexpected JSON value: " + token);
                 }
             }
+            c.disconnect();
             return result;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -73,11 +65,15 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
 
     @Override
     public void add(String key, String value) {
-        HttpPost post = new HttpPost(url);
-        post.addHeader("X-User-ID", userId);
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            JsonGenerator generator = factory.createGenerator(os, ENCODING_JSON);
+            HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+            c.setRequestMethod("POST");
+            c.setRequestProperty("X-User-ID", userId);
+            c.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            c.setDoOutput(true);
+            c.connect();
+
+            JsonGenerator generator = factory.createGenerator(c.getOutputStream(), JsonEncoding.UTF8);
             generator.writeStartArray();
             generator.writeStartArray();
             generator.writeString(key);
@@ -85,9 +81,12 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
             generator.writeEndArray();
             generator.writeEndArray();
             generator.close();
-            post.setEntity(new StringEntity(new String(os.toByteArray(), ENCODING_CHARSET), ContentType.APPLICATION_JSON));
-            CloseableHttpResponse response = client.execute(post);
-            response.getEntity().getContent().close();
+            c.getOutputStream().flush();
+            c.getOutputStream().close();
+
+            if (c.getResponseCode() != 202) {
+                throw new RuntimeException(url + ": " + c.getResponseMessage());
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
