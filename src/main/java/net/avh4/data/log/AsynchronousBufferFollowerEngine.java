@@ -1,18 +1,18 @@
 package net.avh4.data.log;
 
-public class BufferFollowerEngine<F extends TransactionFollower<F>> implements FollowerEngine<F> {
+public class AsynchronousBufferFollowerEngine<F extends TransactionFollower<F>> implements FollowerEngine<F> {
     private final TransactionBuffer buffer;
     private final F masterFollower;
     private int lastCommitted = 0;
     private int lastPending = 0;
     private F forkFollower;
 
-    public BufferFollowerEngine(TransactionBuffer buffer, F follower) {
+    public AsynchronousBufferFollowerEngine(TransactionBuffer buffer, F follower) {
         this.buffer = buffer;
         this.masterFollower = follower;
     }
 
-    protected void pullTransactionLog() {
+    public void sync() {
         synchronized (this) {
             for (Transaction txn : buffer.getCommitted(lastCommitted)) {
                 masterFollower.process(txn);
@@ -32,7 +32,6 @@ public class BufferFollowerEngine<F extends TransactionFollower<F>> implements F
 
     @Override
     public F result() {
-        pullTransactionLog();
         if (forkFollower != null) return forkFollower;
         return masterFollower;
     }

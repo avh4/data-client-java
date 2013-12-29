@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class BufferFollowerEngineIntegrationTest {
+public class SynchronousBufferFollowerEngineIntegrationTest {
     private static final boolean DEBUG = false;
 
     private static class TestFollower implements TransactionFollower<TestFollower> {
@@ -62,7 +62,7 @@ public class BufferFollowerEngineIntegrationTest {
         TransactionBuffer buffer1 = new TransactionBuffer(master, master);
         TransactionBuffer buffer2 = new TransactionBuffer(master, master);
 
-        FollowerEngine<TestFollower> engine1 = new BufferFollowerEngine<>(buffer1, new TestFollower());
+        FollowerEngine<TestFollower> engine1 = new SynchronousBufferFollowerEngine<>(buffer1, new TestFollower());
 
         assertThat(engine1.result().initialValue("A")).isEqualTo("master");
         assertThat(engine1.result().mostRecentValue("A")).isEqualTo("master");
