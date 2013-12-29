@@ -1,7 +1,7 @@
 package net.avh4.data.log;
 
-import java.util.List;
+import org.pcollections.PVector;
 
 public interface TransactionLog {
-    List<Transaction> get(int last);
+    PVector<Transaction> get(int last);
 }

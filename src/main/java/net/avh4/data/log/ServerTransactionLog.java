@@ -1,6 +1,8 @@
 package net.avh4.data.log;
 
 import com.fasterxml.jackson.core.*;
+import org.pcollections.PVector;
+import org.pcollections.TreePVector;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -19,7 +21,7 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
     }
 
     @Override
-    public List<Transaction> get(int last) {
+    public PVector<Transaction> get(int last) {
         String uri = url + "?last=" + last;
         try {
             HttpURLConnection c = (HttpURLConnection) new URL(uri).openConnection();
@@ -57,7 +59,7 @@ public class ServerTransactionLog implements TransactionLog, TransactionLogComma
                 }
             }
             c.disconnect();
-            return result;
+            return TreePVector.from(result);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

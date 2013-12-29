@@ -1,22 +1,24 @@
 package net.avh4.data.log;
 
-import java.util.ArrayList;
+import org.pcollections.PVector;
+import org.pcollections.TreePVector;
+
 import java.util.List;
 
 public class TransientTransactionLog implements TransactionLog, TransactionLogCommands, TransactionLogBulkCommands {
-    private final ArrayList<Transaction> txns = new ArrayList<>();
+    private TreePVector<Transaction> txns = TreePVector.empty();
     private int count = 0;
 
     @Override
     public void add(String key, String value) {
         synchronized (this) {
-            txns.add(new Transaction(++count, key, value));
+            txns = txns.plus(new Transaction(++count, key, value));
         }
     }
 
     @Override
-    public List<Transaction> get(int startingIndex) {
-        return new ArrayList<>(txns.subList(startingIndex, txns.size()));
+    public PVector<Transaction> get(int startingIndex) {
+        return txns.subList(startingIndex, txns.size());
     }
 
     @Override

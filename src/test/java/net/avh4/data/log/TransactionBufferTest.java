@@ -20,7 +20,8 @@ public class TransactionBufferTest {
 
     @Test
     public void getCommitted_shouldGiveTransactionsFromMaster() {
-        assertThat(subject.getCommitted(0)).containsExactly(
+        TransactionBuffer.Updates updates = subject.get(0, 0);
+        assertThat(updates.committed).containsExactly(
                 new Transaction(1, "k1", "v1"),
                 new Transaction(2, "k2", "v2")
         );
@@ -28,7 +29,7 @@ public class TransactionBufferTest {
 
     @Test
     public void getPending_returnsPendingTransactions() {
-        subject.getCommitted(0);
+        subject.get(0, 0);
         subject.add("k10", "v10");
         assertThat(subject.getPending(2, 0)).containsExactly(
                 new Transaction(1, "k10", "v10")
@@ -37,13 +38,13 @@ public class TransactionBufferTest {
 
     @Test
     public void getPending_withNoPendingTransactions_returnsEmpty() {
-        subject.getCommitted(0);
+        subject.get(0, 0);
         assertThat(subject.getPending(2, 0)).isEmpty();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getPending_withUnacknowledgedCommittedTransactions_throws() {
-        subject.getCommitted(0);
+        subject.get(0, 0);
         subject.getPending(0, 0);
     }
 
@@ -62,17 +63,18 @@ public class TransactionBufferTest {
     public void flush_createsNewCommittedTransactions() {
         subject.add("k10", "v10");
         subject.flush();
-        assertThat(subject.getCommitted(2)).containsExactly(
+        TransactionBuffer.Updates updates = subject.get(2, 0);
+        assertThat(updates.committed).containsExactly(
                 new Transaction(3, "k10", "v10")
         );
     }
 
     @Test
     public void flush_clearsPendingTransactions() {
-        subject.getCommitted(0);
+        subject.get(0, 0);
         subject.add("k10", "v10");
         subject.flush();
-        subject.getCommitted(2);
+        subject.get(2, 0);
         assertThat(subject.getPending(3, 0)).isEmpty();
     }
 }
